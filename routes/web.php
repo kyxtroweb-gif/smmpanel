@@ -24,6 +24,19 @@ use App\Http\Controllers\Admin\SettingController as AdminSetting;
 
 // ===== PUBLIC ROUTES =====
 Route::get('/', [HomeController::class, 'getIndex'])->name('home');
+
+// Temporary route to handle Hostinger setup easily (Migrate DB)
+Route::get('/hostinger-setup', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        \Illuminate\Support\Facades\Artisan::call('route:clear');
+        return "Hostinger Database Migrated Successfully! Your tables are ready. You can now access your website.";
+    } catch (\Exception $e) {
+        return "Error migrating: " . $e->getMessage();
+    }
+});
 Route::get('/services', [HomeController::class, 'getServices'])->name('services');
 Route::get('/services/{id}', [HomeController::class, 'getServiceDetails'])->name('service.details');
 Route::get('/pricing', [HomeController::class, 'getPricing'])->name('pricing');
